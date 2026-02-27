@@ -1,0 +1,5 @@
+# Allow all reports and logs
+!*.log
+!*.md
+!*.json
+!.gitignore

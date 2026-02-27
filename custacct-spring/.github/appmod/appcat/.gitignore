@@ -1,0 +1,5 @@
+# Allow all reports
+!*.yaml
+!*.log
+!*.json
+!.gitignore

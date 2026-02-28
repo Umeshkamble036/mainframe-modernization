@@ -75,8 +75,8 @@ class TransactionProcessingServiceTest {
         Transaction txn = buildTxn(9001L, Transaction.TransactionType.DP, "-10.00");
         ValidationResult result = service.validateTransaction(activeCustomer, txn);
 
-        assertThat(result.isValid()).isFalse();
-        assertThat(result.getMessage()).contains("POSITIVE");
+        assertThat(result.valid()).isFalse();
+        assertThat(result.message()).contains("POSITIVE");
     }
 
     @Test
@@ -85,8 +85,8 @@ class TransactionProcessingServiceTest {
         Transaction txn = buildTxn(9002L, Transaction.TransactionType.DP, "100.00");
         ValidationResult result = service.validateTransaction(inactiveCustomer, txn);
 
-        assertThat(result.isValid()).isFalse();
-        assertThat(result.getMessage()).contains("ACTIVE");
+        assertThat(result.valid()).isFalse();
+        assertThat(result.message()).contains("ACTIVE");
     }
 
     @Test
@@ -95,8 +95,8 @@ class TransactionProcessingServiceTest {
         Transaction txn = buildTxn(9001L, Transaction.TransactionType.WD, "5000.00");
         ValidationResult result = service.validateTransaction(activeCustomer, txn);
 
-        assertThat(result.isValid()).isFalse();
-        assertThat(result.getMessage()).contains("INSUFFICIENT");
+        assertThat(result.valid()).isFalse();
+        assertThat(result.message()).contains("INSUFFICIENT");
     }
 
     @Test
@@ -106,8 +106,8 @@ class TransactionProcessingServiceTest {
         Transaction txn = buildTxn(9001L, Transaction.TransactionType.WD, "950.00");
         ValidationResult result = service.validateTransaction(activeCustomer, txn);
 
-        assertThat(result.isValid()).isFalse();
-        assertThat(result.getMessage()).contains("MINIMUM BALANCE");
+        assertThat(result.valid()).isFalse();
+        assertThat(result.message()).contains("MINIMUM BALANCE");
     }
 
     @Test
@@ -115,7 +115,7 @@ class TransactionProcessingServiceTest {
     void validateTransaction_validDeposit_passes() {
         Transaction txn = buildTxn(9001L, Transaction.TransactionType.DP, "500.00");
         ValidationResult result = service.validateTransaction(activeCustomer, txn);
-        assertThat(result.isValid()).isTrue();
+        assertThat(result.valid()).isTrue();
     }
 
     // ----------------------------------------------------------------
@@ -130,7 +130,7 @@ class TransactionProcessingServiceTest {
 
         ApplyResult result = service.applyTransaction(activeCustomer, txn);
 
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.success()).isTrue();
         assertThat(activeCustomer.getAccountBalance())
                 .isEqualByComparingTo(originalBalance.add(new BigDecimal("500.00")));
     }
@@ -143,7 +143,7 @@ class TransactionProcessingServiceTest {
 
         ApplyResult result = service.applyTransaction(activeCustomer, txn);
 
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.success()).isTrue();
         assertThat(activeCustomer.getAccountBalance())
                 .isEqualByComparingTo(originalBalance.subtract(new BigDecimal("200.00")));
     }
@@ -155,7 +155,7 @@ class TransactionProcessingServiceTest {
         Transaction txn = buildTxn(9001L, Transaction.TransactionType.PM, "5000.00");
         ApplyResult result = service.applyTransaction(activeCustomer, txn);
 
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.success()).isTrue();
         assertThat(activeCustomer.getAccountBalance()).isEqualByComparingTo(BigDecimal.ZERO);
     }
 

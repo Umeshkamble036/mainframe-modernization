@@ -96,7 +96,7 @@ public class Customer {
      *   88 CUST-SUSPENDED VALUE 'S'
      *   88 CUST-CLOSED    VALUE 'C'
      */
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = CustomerStatusConverter.class)
     @Column(name = "STATUS", length = 1, nullable = false)
     private CustomerStatus status;
 

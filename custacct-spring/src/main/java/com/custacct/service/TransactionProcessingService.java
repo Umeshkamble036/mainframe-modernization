@@ -70,17 +70,17 @@ public class TransactionProcessingService {
 
         // 2200-VALIDATE-TRANSACTION
         ValidationResult validation = validateTransaction(customer, txn);
-        if (!validation.isValid()) {
-            log.warn("Validation failed for custId={}: {}", txn.getCustomerId(), validation.getMessage());
-            markTransactionFailed(txn, validation.getMessage());
-            return ProcessResult.error(txn.getCustomerId(), validation.getMessage());
+        if (!validation.valid()) {
+            log.warn("Validation failed for custId={}: {}", txn.getCustomerId(), validation.message());
+            markTransactionFailed(txn, validation.message());
+            return ProcessResult.error(txn.getCustomerId(), validation.message());
         }
 
         // 2300-APPLY-TRANSACTION
         ApplyResult applyResult = applyTransaction(customer, txn);
-        if (!applyResult.isSuccess()) {
-            markTransactionFailed(txn, applyResult.getMessage());
-            return ProcessResult.error(txn.getCustomerId(), applyResult.getMessage());
+        if (!applyResult.success()) {
+            markTransactionFailed(txn, applyResult.message());
+            return ProcessResult.error(txn.getCustomerId(), applyResult.message());
         }
 
         // 2400-UPDATE-CUSTOMER-RECORD
@@ -96,7 +96,7 @@ public class TransactionProcessingService {
         return ProcessResult.success(
                 customer,
                 txn,
-                applyResult.getAmountType()
+                applyResult.amountType()
         );
     }
 
@@ -131,12 +131,12 @@ public class TransactionProcessingService {
 
         // WHEN TXN-AMOUNT <= ZEROS
         if (txn.getAmount() == null || txn.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            return ValidationResult.invalid("TRANSACTION AMOUNT MUST BE POSITIVE");
+            return ValidationResult.ofInvalid("TRANSACTION AMOUNT MUST BE POSITIVE");
         }
 
         // WHEN NOT CUST-ACTIVE (status != 'A')
         if (!customer.isActive()) {
-            return ValidationResult.invalid("ACCOUNT IS NOT IN ACTIVE STATUS");
+            return ValidationResult.ofInvalid("ACCOUNT IS NOT IN ACTIVE STATUS");
         }
 
         // Withdrawal-specific checks
@@ -145,7 +145,7 @@ public class TransactionProcessingService {
 
             // WHEN TXN-WITHDRAWAL AND TXN-AMOUNT > CUST-ACCOUNT-BAL
             if (txn.getAmount().compareTo(customer.getAccountBalance()) > 0) {
-                return ValidationResult.invalid("INSUFFICIENT FUNDS FOR WITHDRAWAL");
+                return ValidationResult.ofInvalid("INSUFFICIENT FUNDS FOR WITHDRAWAL");
             }
 
             // WHEN TXN-WITHDRAWAL AND CUST-ACCOUNT-BAL - TXN-AMOUNT < CUST-MIN-BALANCE
@@ -153,11 +153,11 @@ public class TransactionProcessingService {
             BigDecimal minBalance = customer.getMinBalance() != null
                     ? customer.getMinBalance() : BigDecimal.ZERO;
             if (balanceAfter.compareTo(minBalance) < 0) {
-                return ValidationResult.invalid("WITHDRAWAL WOULD BREACH MINIMUM BALANCE");
+                return ValidationResult.ofInvalid("WITHDRAWAL WOULD BREACH MINIMUM BALANCE");
             }
         }
 
-        return ValidationResult.valid();
+        return ValidationResult.ofValid();
     }
 
     // ----------------------------------------------------------------
@@ -180,11 +180,11 @@ public class TransactionProcessingService {
         switch (txn.getType()) {
             case DP: // 88 TXN-DEPOSIT — ADD TXN-AMOUNT TO CUST-ACCOUNT-BAL
                 customer.setAccountBalance(customer.getAccountBalance().add(amount));
-                return ApplyResult.success(AmountType.DEPOSIT);
+                return ApplyResult.ofSuccess(AmountType.DEPOSIT);
 
             case WD: // 88 TXN-WITHDRAWAL — SUBTRACT TXN-AMOUNT FROM CUST-ACCOUNT-BAL
                 customer.setAccountBalance(customer.getAccountBalance().subtract(amount));
-                return ApplyResult.success(AmountType.WITHDRAWAL);
+                return ApplyResult.ofSuccess(AmountType.WITHDRAWAL);
 
             case PM: // 88 TXN-PAYMENT — SUBTRACT, floor at 0
                 BigDecimal newBalance = customer.getAccountBalance().subtract(amount);
@@ -193,14 +193,14 @@ public class TransactionProcessingService {
                     newBalance = BigDecimal.ZERO;
                 }
                 customer.setAccountBalance(newBalance);
-                return ApplyResult.success(AmountType.PAYMENT);
+                return ApplyResult.ofSuccess(AmountType.PAYMENT);
 
             case TR: // 88 TXN-TRANSFER — SUBTRACT TXN-AMOUNT FROM CUST-ACCOUNT-BAL
                 customer.setAccountBalance(customer.getAccountBalance().subtract(amount));
-                return ApplyResult.success(AmountType.WITHDRAWAL); // counts as withdrawal in totals
+                return ApplyResult.ofSuccess(AmountType.WITHDRAWAL); // counts as withdrawal in totals
 
             default:
-                return ApplyResult.failure("UNKNOWN TRANSACTION TYPE CODE");
+                return ApplyResult.ofFailure("UNKNOWN TRANSACTION TYPE CODE");
         }
     }
 
@@ -246,18 +246,13 @@ public class TransactionProcessingService {
     public enum AmountType { DEPOSIT, WITHDRAWAL, PAYMENT }
 
     public record ValidationResult(boolean valid, String message) {
-        public boolean isValid() { return valid; }
-        public String getMessage() { return message; }
-        static ValidationResult valid() { return new ValidationResult(true, null); }
-        static ValidationResult invalid(String msg) { return new ValidationResult(false, msg); }
+        public static ValidationResult ofValid() { return new ValidationResult(true, null); }
+        public static ValidationResult ofInvalid(String msg) { return new ValidationResult(false, msg); }
     }
 
     public record ApplyResult(boolean success, String message, AmountType amountType) {
-        public boolean isSuccess() { return success; }
-        public String getMessage() { return message; }
-        public AmountType getAmountType() { return amountType; }
-        static ApplyResult success(AmountType type) { return new ApplyResult(true, null, type); }
-        static ApplyResult failure(String msg) { return new ApplyResult(false, msg, null); }
+        public static ApplyResult ofSuccess(AmountType type) { return new ApplyResult(true, null, type); }
+        public static ApplyResult ofFailure(String msg) { return new ApplyResult(false, msg, null); }
     }
 
     public record ProcessResult(

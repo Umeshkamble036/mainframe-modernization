@@ -60,7 +60,7 @@ public class Transaction {
     private LocalTime time;
 
     /** TXN-REFERENCE PIC X(16) */
-    @Column(name = "REFERENCE", length = 16)
+    @Column(name = "REFERENCE", length = 20)
     private String reference;
 
     /** TXN-DESCRIPTION PIC X(40) */

@@ -116,6 +116,61 @@ public class Customer {
     @Column(name = "BRANCH_CODE")
     private Integer branchCode;
 
+    // ================================================================
+    // Explicit Getters & Setters (work around Lombok annotation processing)
+    // ================================================================
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getStreet() { return street; }
+    public void setStreet(String street) { this.street = street; }
+
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
+
+    public String getZipCode() { return zipCode; }
+    public void setZipCode(String zipCode) { this.zipCode = zipCode; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public BigDecimal getAccountBalance() { return accountBalance; }
+    public void setAccountBalance(BigDecimal accountBalance) { this.accountBalance = accountBalance; }
+
+    public BigDecimal getCreditLimit() { return creditLimit; }
+    public void setCreditLimit(BigDecimal creditLimit) { this.creditLimit = creditLimit; }
+
+    public BigDecimal getMinBalance() { return minBalance; }
+    public void setMinBalance(BigDecimal minBalance) { this.minBalance = minBalance; }
+
+    public CustomerStatus getStatus() { return status; }
+    public void setStatus(CustomerStatus status) { this.status = status; }
+
+    public LocalDate getOpenDate() { return openDate; }
+    public void setOpenDate(LocalDate openDate) { this.openDate = openDate; }
+
+    public LocalDate getLastTransactionDate() { return lastTransactionDate; }
+    public void setLastTransactionDate(LocalDate lastTransactionDate) { this.lastTransactionDate = lastTransactionDate; }
+
+    public int getTransactionCount() { return transactionCount; }
+    public void setTransactionCount(int transactionCount) { this.transactionCount = transactionCount; }
+
+    public Integer getBranchCode() { return branchCode; }
+    public void setBranchCode(Integer branchCode) { this.branchCode = branchCode; }
+
     // ----------------------------------------------------------------
     // Convenience / business logic methods (replaces COBOL 88-level conditions)
     // ----------------------------------------------------------------

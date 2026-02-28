@@ -2,6 +2,8 @@ package com.custacct.batch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -32,6 +34,7 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class BatchScheduler {
 
+    private static final Logger log = LoggerFactory.getLogger(BatchScheduler.class);
     private final JobLauncher jobLauncher;
     private final Job custProcessingJob;
 

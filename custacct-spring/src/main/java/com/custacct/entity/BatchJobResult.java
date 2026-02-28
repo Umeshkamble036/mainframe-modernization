@@ -75,4 +75,47 @@ public class BatchJobResult {
 
     @Column(name = "STATUS", length = 20)
     private String status;
+
+    // ================================================================
+    // Explicit Getters & Setters (work around Lombok annotation processing)
+    // ================================================================
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Long getJobExecutionId() { return jobExecutionId; }
+    public void setJobExecutionId(Long jobExecutionId) { this.jobExecutionId = jobExecutionId; }
+
+    public LocalDateTime getRunDateTime() { return runDateTime; }
+    public void setRunDateTime(LocalDateTime runDateTime) { this.runDateTime = runDateTime; }
+
+    public int getRecordsRead() { return recordsRead; }
+    public void setRecordsRead(int recordsRead) { this.recordsRead = recordsRead; }
+
+    public int getRecordsUpdated() { return recordsUpdated; }
+    public void setRecordsUpdated(int recordsUpdated) { this.recordsUpdated = recordsUpdated; }
+
+    public int getRecordsSkipped() { return recordsSkipped; }
+    public void setRecordsSkipped(int recordsSkipped) { this.recordsSkipped = recordsSkipped; }
+
+    public int getRecordsErrors() { return recordsErrors; }
+    public void setRecordsErrors(int recordsErrors) { this.recordsErrors = recordsErrors; }
+
+    public BigDecimal getTotalDeposits() { return totalDeposits; }
+    public void setTotalDeposits(BigDecimal totalDeposits) { this.totalDeposits = totalDeposits; }
+
+    public BigDecimal getTotalWithdrawals() { return totalWithdrawals; }
+    public void setTotalWithdrawals(BigDecimal totalWithdrawals) { this.totalWithdrawals = totalWithdrawals; }
+
+    public BigDecimal getTotalPayments() { return totalPayments; }
+    public void setTotalPayments(BigDecimal totalPayments) { this.totalPayments = totalPayments; }
+
+    public int getReturnCode() { return returnCode; }
+    public void setReturnCode(int returnCode) { this.returnCode = returnCode; }
+
+    public String getReportText() { return reportText; }
+    public void setReportText(String reportText) { this.reportText = reportText; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }
